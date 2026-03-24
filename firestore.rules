@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: posts
+    // Document ID: auto-generated
+    // Fields:
+    //   - title: string (required) - The title of the diary entry.
+    //   - content: string (required) - The content of the diary entry.
+    //   - publishedAt: timestamp (required) - The date and time the entry was published.
+    //   - createdAt: timestamp (required) - The date and time the entry was created.
+    //   - updatedAt: timestamp (required) - The date and time the entry was last updated.
+    //   - authorUid: string (required) - The UID of the author.
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(authorUid) {
+      return isAuthenticated() && request.auth.uid == authorUid;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == "samuderabagja@gmail.com" && 
+        request.auth.token.email_verified == true
+      );
+    }
+
+    function isValidPost(data) {
+      return data.keys().hasAll(['title', 'content', 'publishedAt', 'authorUid']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.content is string && data.content.size() > 0 && data.content.size() < 100000 &&
+             data.publishedAt is timestamp &&
+             data.authorUid is string && data.authorUid == request.auth.uid;
+    }
+
+    match /posts/{postId} {
+      // Publicly readable
+      allow read: if true;
+      
+      // Only admin (owner) can create/update/delete
+      allow create: if isAdmin() && isValidPost(request.resource.data);
+      allow update: if isAdmin() && isValidPost(request.resource.data) && 
+                    request.resource.data.authorUid == resource.data.authorUid;
+      allow delete: if isAdmin();
+    }
+  }
+}

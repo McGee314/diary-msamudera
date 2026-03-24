@@ -1,0 +1,45 @@
+{
+  "entities": {
+    "Post": {
+      "title": "Diary Post",
+      "description": "A single diary entry or blog post.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the diary entry."
+        },
+        "content": {
+          "type": "string",
+          "description": "The content of the diary entry (Markdown supported)."
+        },
+        "publishedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time the entry was published (allows backdating)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time the entry was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The date and time the entry was last updated."
+        },
+        "authorUid": {
+          "type": "string",
+          "description": "The UID of the author who created the entry."
+        }
+      },
+      "required": ["title", "content", "publishedAt", "authorUid"]
+    }
+  },
+  "firestore": {
+    "/posts/{postId}": {
+      "schema": "Post",
+      "description": "Collection of diary posts."
+    }
+  }
+}
