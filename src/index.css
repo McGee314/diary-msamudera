@@ -1,24 +1,41 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Libre Baskerville", serif;
+  
+  /* Modern color palette */
+  --color-primary: #AEB784;
+  --color-primary-dark: #94A86B;
+  --color-primary-light: #C4D4A8;
+  --color-bg: #F8F3E1;
+  --color-bg-dark: #F0EBD9;
+  --color-text-dark: #3E3B37;
+  --color-text-light: #8B8680;
+  --color-accent: #C9846C;
+  --color-accent-light: #E6B8A8;
+  --color-border: #E8DFD2;
+  --color-surface: #FFFBF5;
 }
 
 @layer base {
   body {
-    @apply bg-stone-50 text-stone-900;
+    @apply bg-[#F8F3E1] text-[#3E3B37];
+  }
+  
+  ::selection {
+    @apply bg-[#AEB784] text-white;
   }
 }
 
 /* Custom DayPicker styles to match theme */
 .rdp {
   --rdp-cell-size: 36px;
-  --rdp-accent-color: #1c1917;
-  --rdp-background-color: #f5f5f4;
+  --rdp-accent-color: #AEB784;
+  --rdp-background-color: #F0EBD9;
   margin: 0;
 }
 
@@ -27,4 +44,21 @@
 .rdp-day_selected:hover {
   background-color: var(--rdp-accent-color);
   color: white;
+}
+
+/* Tailwind prose customization for modern look */
+.prose {
+  @apply text-[#3E3B37];
+}
+
+.prose-headings {
+  @apply text-[#3E3B37];
+}
+
+.prose-a {
+  @apply text-[#AEB784] hover:text-[#94A86B];
+}
+
+.prose-strong {
+  @apply text-[#3E3B37];
 }

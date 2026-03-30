@@ -90,7 +90,7 @@ export default function PostEditor() {
       <div className="flex items-center justify-between">
         <button 
           onClick={() => navigate('/admin')}
-          className="text-stone-400 hover:text-stone-900 flex items-center gap-2 text-sm transition-colors"
+          className="text-[#AEB784] hover:text-[#94A86B] flex items-center gap-2 text-sm transition-colors"
         >
           <ArrowLeft size={16} />
           Back to Dashboard
@@ -98,7 +98,7 @@ export default function PostEditor() {
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setPreview(!preview)}
-            className="px-4 py-2 text-sm font-medium text-stone-600 hover:bg-stone-100 rounded-full flex items-center gap-2 transition-all"
+            className="px-4 py-2 text-sm font-medium text-[#8B8680] hover:bg-[#F0EBD9] rounded-full flex items-center gap-2 transition-all"
           >
             {preview ? <Edit3 size={16} /> : <Eye size={16} />}
             {preview ? 'Edit' : 'Preview'}
@@ -106,7 +106,7 @@ export default function PostEditor() {
           <button 
             onClick={handleSubmit}
             disabled={saving}
-            className="bg-stone-900 text-white px-6 py-2 rounded-full text-sm font-medium flex items-center gap-2 hover:bg-stone-800 disabled:opacity-50 transition-all"
+            className="bg-[#94A86B] text-white px-6 py-2 rounded-full text-sm font-medium flex items-center gap-2 hover:bg-[#AEB784] disabled:opacity-50 transition-all shadow-md shadow-[#AEB784]/20"
           >
             <Save size={16} />
             {saving ? 'Saving...' : 'Save Entry'}
@@ -114,50 +114,50 @@ export default function PostEditor() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+      <div className="bg-[#FFFBF5] rounded-2xl border border-[#E8DFD2] shadow-md overflow-hidden">
         {preview ? (
           <div className="p-12 min-h-[500px]">
             <header className="mb-8">
-              <div className="text-xs uppercase tracking-widest text-stone-400 mb-2">
+              <div className="text-xs uppercase tracking-widest text-[#AEB784] mb-2">
                 {format(new Date(formData.publishedAt), 'MMMM d, yyyy')}
               </div>
-              <h1 className="text-4xl font-serif">{formData.title || 'Untitled Entry'}</h1>
+              <h1 className="text-4xl font-serif text-[#3E3B37]">{formData.title || 'Untitled Entry'}</h1>
             </header>
-            <div className="prose prose-stone max-w-none">
+            <div className="prose max-w-none prose-headings:font-serif prose-p:text-[#3E3B37] prose-a:text-[#AEB784] hover:prose-a:text-[#94A86B]">
               <ReactMarkdown>{formData.content || '*No content yet*'}</ReactMarkdown>
             </div>
           </div>
         ) : (
           <form className="p-8 space-y-6">
             <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-stone-400 px-1">Title</label>
+              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">Title</label>
               <input 
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Entry Title"
-                className="w-full text-2xl font-serif border-none focus:ring-0 p-0 placeholder:text-stone-200"
+                className="w-full text-2xl font-serif border-none focus:ring-0 p-0 bg-[#FFFBF5] placeholder:text-[#E8DFD2] text-[#3E3B37]"
               />
             </div>
             
             <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-stone-400 px-1">Publish Date</label>
+              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">Publish Date</label>
               <input 
                 type="date"
                 value={formData.publishedAt}
                 onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
-                className="block w-full text-sm border-stone-200 rounded-lg focus:ring-stone-900 focus:border-stone-900"
+                className="block w-full text-sm border-[#E8DFD2] rounded-lg focus:ring-[#AEB784] focus:border-[#AEB784] bg-[#F8F3E1] text-[#3E3B37]"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-stone-400 px-1">Content (Markdown)</label>
+              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">Content (Markdown)</label>
               <textarea 
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 placeholder="Write your thoughts here..."
                 rows={15}
-                className="w-full text-stone-700 border-none focus:ring-0 p-0 resize-none placeholder:text-stone-200 leading-relaxed"
+                className="w-full text-[#3E3B37] border-none focus:ring-0 p-0 bg-[#FFFBF5] resize-none placeholder:text-[#E8DFD2] leading-relaxed"
               />
             </div>
           </form>
