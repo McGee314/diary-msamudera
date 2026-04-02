@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { db, auth, collection, doc, getDoc, setDoc, updateDoc, Timestamp } from '../lib/firebase';
+import { db, collection, doc, getDoc, setDoc, updateDoc, Timestamp } from '../lib/firebase';
 import { toast } from 'sonner';
-import { Save, ArrowLeft, Eye, Edit3 } from 'lucide-react';
+import { Save, ArrowLeft, Eye, Edit3, FileText } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { format } from 'date-fns';
 
@@ -60,7 +60,6 @@ export default function PostEditor() {
         content: formData.content,
         publishedAt: Timestamp.fromDate(new Date(formData.publishedAt)),
         updatedAt: Timestamp.now(),
-        authorUid: auth.currentUser?.uid
       };
 
       if (id) {
@@ -83,82 +82,140 @@ export default function PostEditor() {
     }
   };
 
-  if (loading) return <div className="text-center py-20 italic">Loading editor...</div>;
+  if (loading) {
+    return (
+      <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
+        <div className="flex items-center justify-between">
+          <div className="skeleton h-5 w-36 rounded-full" />
+          <div className="flex gap-3">
+            <div className="skeleton h-9 w-24 rounded-full" />
+            <div className="skeleton h-9 w-28 rounded-full" />
+          </div>
+        </div>
+        <div className="glass-card p-10 space-y-6">
+          <div className="skeleton h-6 w-20" />
+          <div className="skeleton h-10 w-2/3" />
+          <div className="border-t border-[#E8DFD2]/50 pt-6 space-y-3">
+            <div className="skeleton h-4 w-full" />
+            <div className="skeleton h-4 w-full" />
+            <div className="skeleton h-4 w-5/6" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const wordCount = formData.content.trim().split(/\s+/).filter(Boolean).length;
+  const charCount = formData.content.length;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+      {/* Toolbar */}
       <div className="flex items-center justify-between">
-        <button 
+        <button
           onClick={() => navigate('/admin')}
-          className="text-[#AEB784] hover:text-[#94A86B] flex items-center gap-2 text-sm transition-colors"
+          className="group flex items-center gap-1.5 text-[0.8125rem] text-[#8B8680] hover:text-[#3E3B37] transition-colors duration-200"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={15} className="transition-transform duration-200 group-hover:-translate-x-0.5" />
           Back to Dashboard
         </button>
-        <div className="flex items-center gap-3">
-          <button 
+
+        <div className="flex items-center gap-2.5">
+          <button
             onClick={() => setPreview(!preview)}
-            className="px-4 py-2 text-sm font-medium text-[#8B8680] hover:bg-[#F0EBD9] rounded-full flex items-center gap-2 transition-all"
+            className="btn-ghost"
           >
-            {preview ? <Edit3 size={16} /> : <Eye size={16} />}
+            {preview ? <Edit3 size={14} /> : <Eye size={14} />}
             {preview ? 'Edit' : 'Preview'}
           </button>
-          <button 
+          <button
             onClick={handleSubmit}
             disabled={saving}
-            className="bg-[#94A86B] text-white px-6 py-2 rounded-full text-sm font-medium flex items-center gap-2 hover:bg-[#AEB784] disabled:opacity-50 transition-all shadow-md shadow-[#AEB784]/20"
+            className="btn-primary"
           >
-            <Save size={16} />
-            {saving ? 'Saving...' : 'Save Entry'}
+            {saving ? (
+              <span
+                className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white inline-block"
+                style={{ animation: 'spin 0.7s linear infinite' }}
+              />
+            ) : (
+              <Save size={14} />
+            )}
+            {saving ? 'Saving…' : 'Save Entry'}
           </button>
         </div>
       </div>
 
-      <div className="bg-[#FFFBF5] rounded-2xl border border-[#E8DFD2] shadow-md overflow-hidden">
+      {/* Editor card */}
+      <div className="glass-card overflow-hidden">
         {preview ? (
-          <div className="p-12 min-h-[500px]">
+          /* Preview */
+          <div className="p-12 min-h-[500px] animate-fade-in">
             <header className="mb-8">
-              <div className="text-xs uppercase tracking-widest text-[#AEB784] mb-2">
+              <div className="badge mb-3">
                 {format(new Date(formData.publishedAt), 'MMMM d, yyyy')}
               </div>
-              <h1 className="text-4xl font-serif text-[#3E3B37]">{formData.title || 'Untitled Entry'}</h1>
+              <h1 className="text-4xl font-serif text-[#3E3B37] leading-tight">
+                {formData.title || 'Untitled Entry'}
+              </h1>
             </header>
-            <div className="prose max-w-none prose-headings:font-serif prose-p:text-[#3E3B37] prose-a:text-[#AEB784] hover:prose-a:text-[#94A86B]">
+            <div className="prose max-w-none prose-headings:font-serif prose-p:leading-[1.85] prose-p:text-[#3E3B37] prose-a:text-[#AEB784] hover:prose-a:text-[#94A86B]">
               <ReactMarkdown>{formData.content || '*No content yet*'}</ReactMarkdown>
             </div>
           </div>
         ) : (
-          <form className="p-8 space-y-6">
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">Title</label>
-              <input 
+          /* Edit form */
+          <form className="divide-y divide-[#E8DFD2]/50">
+            {/* Title section */}
+            <div className="px-8 pt-8 pb-6 space-y-2">
+              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784] flex items-center gap-1.5">
+                <FileText size={10} />
+                Title
+              </label>
+              <input
                 type="text"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Entry Title"
-                className="w-full text-2xl font-serif border-none focus:ring-0 p-0 bg-[#FFFBF5] placeholder:text-[#E8DFD2] text-[#3E3B37]"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">Publish Date</label>
-              <input 
-                type="date"
-                value={formData.publishedAt}
-                onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
-                className="block w-full text-sm border-[#E8DFD2] rounded-lg focus:ring-[#AEB784] focus:border-[#AEB784] bg-[#F8F3E1] text-[#3E3B37]"
+                className="w-full text-[1.625rem] font-serif bg-transparent border-none outline-none placeholder:text-[#E8DFD2] text-[#3E3B37] focus:ring-0 leading-snug"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">Content (Markdown)</label>
-              <textarea 
+            {/* Date section */}
+            <div className="px-8 py-4">
+              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784] block mb-2">
+                Publish Date
+              </label>
+              <input
+                type="date"
+                value={formData.publishedAt}
+                onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
+                className="input-modern w-auto text-sm"
+              />
+            </div>
+
+            {/* Content section */}
+            <div className="px-8 pt-6 pb-4 space-y-2">
+              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784]">
+                Content (Markdown)
+              </label>
+              <textarea
                 value={formData.content}
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                placeholder="Write your thoughts here..."
-                rows={15}
-                className="w-full text-[#3E3B37] border-none focus:ring-0 p-0 bg-[#FFFBF5] resize-none placeholder:text-[#E8DFD2] leading-relaxed"
+                placeholder="Write your thoughts here…"
+                rows={18}
+                className="w-full text-[#3E3B37] bg-transparent border-none outline-none focus:ring-0 resize-none placeholder:text-[#E8DFD2]/80 leading-[1.85] text-[0.9375rem]"
               />
+            </div>
+
+            {/* Status bar */}
+            <div
+              className="px-8 py-3 flex items-center gap-4 text-[10px] text-[#8B8680]"
+              style={{ background: 'rgba(240,235,217,0.3)' }}
+            >
+              <span>{wordCount} words</span>
+              <span className="opacity-40">·</span>
+              <span>{charCount} characters</span>
             </div>
           </form>
         )}

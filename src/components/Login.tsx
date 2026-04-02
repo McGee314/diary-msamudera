@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { LogIn } from 'lucide-react';
+import { LogIn, Lock } from 'lucide-react';
 import { login, getAttemptsRemaining } from '../lib/localAuth';
 
 export default function Login() {
@@ -20,7 +20,6 @@ export default function Login() {
       toast.success(result.message);
       setUsername('');
       setPassword('');
-      // Reload to update auth state
       window.location.href = '/admin';
     } else {
       toast.error(result.message);
@@ -33,53 +32,94 @@ export default function Login() {
   const attemptsRemaining = getAttemptsRemaining();
 
   return (
-    <div className="max-w-md mx-auto py-20">
-      <div className="bg-[#FFFBF5] p-12 rounded-3xl border border-[#E8DFD2] shadow-md text-center space-y-8">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-serif italic text-[#3E3B37]">Admin Access</h1>
-          <p className="text-[#8B8680] text-sm">Please sign in to manage Diary Samudera</p>
-        </div>
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-[#E8DFD2] bg-[#F8F3E1] focus:outline-none focus:ring-2 focus:ring-[#AEB784] focus:border-transparent text-sm text-[#3E3B37] placeholder:text-[#C9846C]"
-              disabled={loading}
-            />
+    <div className="min-h-[70vh] flex items-center justify-center animate-fade-in">
+      <div className="w-full max-w-sm">
+        {/* Card */}
+        <div className="glass-card p-10 space-y-8">
+          {/* Icon */}
+          <div className="flex flex-col items-center gap-4">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform hover:scale-105"
+              style={{
+                background: 'linear-gradient(135deg, #94A86B 0%, #AEB784 100%)',
+                boxShadow: '0 6px 24px rgba(148,168,107,0.35), 0 1px 0 rgba(255,255,255,0.2) inset',
+              }}
+            >
+              <Lock size={22} className="text-white" />
+            </div>
+            <div className="text-center space-y-1.5">
+              <h1 className="text-2xl font-serif italic text-[#3E3B37]">Admin Access</h1>
+              <p className="text-[#8B8680] text-[0.8125rem] leading-relaxed">
+                Sign in to manage Diary Samudera
+              </p>
+            </div>
           </div>
 
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-lg border border-[#E8DFD2] bg-[#F8F3E1] focus:outline-none focus:ring-2 focus:ring-[#AEB784] focus:border-transparent text-sm text-[#3E3B37] placeholder:text-[#C9846C]"
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">
+                Username
+              </label>
+              <input
+                id="login-username"
+                type="text"
+                placeholder="Enter username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="input-modern"
+                disabled={loading}
+                autoComplete="username"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">
+                Password
+              </label>
+              <input
+                id="login-password"
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-modern"
+                disabled={loading}
+                autoComplete="current-password"
+              />
+            </div>
+
+            <button
+              type="submit"
               disabled={loading}
-            />
-          </div>
+              className="btn-primary w-full justify-center py-3 mt-2"
+            >
+              {loading ? (
+                <span
+                  className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white inline-block"
+                  style={{ animation: 'spin 0.7s linear infinite' }}
+                />
+              ) : (
+                <LogIn size={15} />
+              )}
+              {loading ? 'Signing in…' : 'Sign In'}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#94A86B] text-white py-3 rounded-full font-medium flex items-center justify-center gap-2 hover:bg-[#AEB784] transition-all shadow-lg shadow-[#AEB784]/20 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <LogIn size={18} />
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-
-        <div className="text-[10px] text-[#AEB784] uppercase tracking-widest">
-          <p>Authorized users only</p>
-          {attemptsRemaining < 3 && attemptsRemaining > 0 && (
-            <p className="text-[#C9846C] mt-2">
-              {attemptsRemaining} attempt{attemptsRemaining > 1 ? 's' : ''} remaining
+          {/* Footer note */}
+          <div className="text-center space-y-1.5">
+            <p className="text-[10px] text-[#AEB784] uppercase tracking-widest">
+              Authorized users only
             </p>
-          )}
+            {attemptsRemaining < 3 && attemptsRemaining > 0 && (
+              <p
+                className="text-[10px] uppercase tracking-widest font-semibold"
+                style={{ color: '#C9846C' }}
+              >
+                {attemptsRemaining} attempt{attemptsRemaining > 1 ? 's' : ''} remaining
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
