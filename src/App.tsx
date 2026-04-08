@@ -14,6 +14,7 @@ interface Post {
   id: string;
   title: string;
   content: string;
+  photoUrl?: string;
   publishedAt: Timestamp;
   createdAt: Timestamp;
   updatedAt: Timestamp;

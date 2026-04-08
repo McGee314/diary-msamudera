@@ -1,10 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db, collection, doc, getDoc, setDoc, updateDoc, Timestamp } from '../lib/firebase';
 import { toast } from 'sonner';
-import { Save, ArrowLeft, Eye, Edit3, FileText } from 'lucide-react';
+import { Save, ArrowLeft, Eye, Edit3, FileText, ImagePlus, X, Camera } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { format } from 'date-fns';
+
+// Compress and resize image to base64
+function compressImage(file: File, maxWidth = 800, quality = 0.7): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function PostEditor() {
   const { id } = useParams();
@@ -12,6 +48,9 @@ export default function PostEditor() {
   const [loading, setLoading] = useState(id ? true : false);
   const [saving, setSaving] = useState(false);
   const [preview, setPreview] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoLoading, setPhotoLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -32,6 +71,9 @@ export default function PostEditor() {
               content: data.content,
               publishedAt: data.publishedAt.toDate().toISOString().split('T')[0]
             });
+            if (data.photoUrl) {
+              setPhotoPreview(data.photoUrl);
+            }
           } else {
             toast.error('Post not found');
             navigate('/admin');
@@ -46,6 +88,47 @@ export default function PostEditor() {
     }
   }, [id, navigate]);
 
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    setPhotoLoading(true);
+    try {
+      const compressed = await compressImage(file);
+      // Check size — Firestore docs max ~1MB, base64 adds ~33% overhead
+      const sizeKB = Math.round((compressed.length * 3) / 4 / 1024);
+      if (sizeKB > 700) {
+        // Retry with lower quality
+        const recompressed = await compressImage(file, 600, 0.5);
+        const reSizeKB = Math.round((recompressed.length * 3) / 4 / 1024);
+        if (reSizeKB > 700) {
+          toast.error('Image is too large. Try a smaller photo.');
+          return;
+        }
+        setPhotoPreview(recompressed);
+      } else {
+        setPhotoPreview(compressed);
+      }
+      toast.success('Photo added!');
+    } catch (error) {
+      toast.error('Failed to process image');
+    } finally {
+      setPhotoLoading(false);
+      // Reset input so same file can be re-selected
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const removePhoto = () => {
+    setPhotoPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.content) {
@@ -55,12 +138,19 @@ export default function PostEditor() {
 
     setSaving(true);
     try {
-      const postData = {
+      const postData: Record<string, any> = {
         title: formData.title,
         content: formData.content,
         publishedAt: Timestamp.fromDate(new Date(formData.publishedAt)),
         updatedAt: Timestamp.now(),
       };
+
+      // Include photoUrl (or empty string to clear it)
+      if (photoPreview) {
+        postData.photoUrl = photoPreview;
+      } else {
+        postData.photoUrl = '';
+      }
 
       if (id) {
         await updateDoc(doc(db, 'posts', id), postData);
@@ -159,6 +249,18 @@ export default function PostEditor() {
                 {formData.title || 'Untitled Entry'}
               </h1>
             </header>
+
+            {/* Photo preview */}
+            {photoPreview && (
+              <div className="diary-photo-wrapper mb-8">
+                <img
+                  src={photoPreview}
+                  alt="Diary photo"
+                  className="diary-photo"
+                />
+              </div>
+            )}
+
             <div className="prose max-w-none prose-headings:font-serif prose-p:leading-[1.85] prose-p:text-[#3E3B37] prose-a:text-[#AEB784] hover:prose-a:text-[#94A86B]">
               <ReactMarkdown>{formData.content || '*No content yet*'}</ReactMarkdown>
             </div>
@@ -194,6 +296,83 @@ export default function PostEditor() {
               />
             </div>
 
+            {/* Photo section */}
+            <div className="px-8 py-6">
+              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784] flex items-center gap-1.5 mb-3">
+                <Camera size={10} />
+                Photo
+              </label>
+
+              {/* Hidden file input — accepts images from gallery or camera */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoSelect}
+                className="hidden"
+                id="photo-upload"
+              />
+
+              {photoPreview ? (
+                /* Photo preview with remove button */
+                <div className="photo-upload-preview">
+                  <img
+                    src={photoPreview}
+                    alt="Preview"
+                    className="photo-upload-img"
+                  />
+                  <div className="photo-upload-overlay">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="photo-overlay-btn"
+                    >
+                      <ImagePlus size={16} />
+                      Change
+                    </button>
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="photo-overlay-btn photo-overlay-btn-danger"
+                    >
+                      <X size={16} />
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* Upload zone */
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={photoLoading}
+                  className="photo-upload-zone"
+                >
+                  {photoLoading ? (
+                    <>
+                      <span
+                        className="w-5 h-5 rounded-full border-2 border-[#AEB784]/30 border-t-[#AEB784] inline-block"
+                        style={{ animation: 'spin 0.7s linear infinite' }}
+                      />
+                      <span className="text-sm text-[#8B8680]">Processing…</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="photo-upload-icon">
+                        <ImagePlus size={24} />
+                      </div>
+                      <span className="text-sm font-medium text-[#3E3B37]">
+                        Add Photo
+                      </span>
+                      <span className="text-xs text-[#8B8680]">
+                        Tap to open gallery or camera
+                      </span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+
             {/* Content section */}
             <div className="px-8 pt-6 pb-4 space-y-2">
               <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784]">
@@ -216,6 +395,12 @@ export default function PostEditor() {
               <span>{wordCount} words</span>
               <span className="opacity-40">·</span>
               <span>{charCount} characters</span>
+              {photoPreview && (
+                <>
+                  <span className="opacity-40">·</span>
+                  <span className="text-[#AEB784]">📷 1 photo</span>
+                </>
+              )}
             </div>
           </form>
         )}

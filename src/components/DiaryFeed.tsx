@@ -8,6 +8,7 @@ interface Post {
   id: string;
   title: string;
   content: string;
+  photoUrl?: string;
   publishedAt: Timestamp;
 }
 
@@ -270,6 +271,17 @@ export default function DiaryFeed() {
                   {post.title}
                 </h2>
               </header>
+
+              {/* Diary Photo */}
+              {post.photoUrl && (
+                <div className="diary-photo-wrapper mb-6">
+                  <img
+                    src={post.photoUrl}
+                    alt={`Photo for ${post.title}`}
+                    className="diary-photo"
+                  />
+                </div>
+              )}
 
               <div className="prose max-w-none prose-headings:font-serif prose-p:leading-[1.85] prose-p:text-[#3E3B37] prose-a:text-[#AEB784] hover:prose-a:text-[#94A86B]">
                 <ReactMarkdown>{post.content}</ReactMarkdown>

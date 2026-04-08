@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { collection, db, query, orderBy, onSnapshot, deleteDoc, doc } from '../lib/firebase';
 import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Plus, Edit2, Trash2, ExternalLink, LayoutDashboard } from 'lucide-react';
+import { Plus, Edit2, Trash2, ExternalLink, LayoutDashboard, ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Post {
   id: string;
   title: string;
+  photoUrl?: string;
   publishedAt: any;
 }
 
@@ -109,6 +110,9 @@ export default function AdminDashboard() {
               <th className="px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784]">
                 Date
               </th>
+              <th className="px-4 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784] text-center w-16">
+                Photo
+              </th>
               <th className="px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784]">
                 Title
               </th>
@@ -128,6 +132,21 @@ export default function AdminDashboard() {
                   <span className="badge font-mono text-[0.6875rem] tracking-tight normal-case">
                     {format(post.publishedAt.toDate(), 'dd MMM yyyy')}
                   </span>
+                </td>
+                <td className="px-4 py-4 text-center">
+                  {post.photoUrl ? (
+                    <div className="dashboard-thumb">
+                      <img
+                        src={post.photoUrl}
+                        alt=""
+                        className="dashboard-thumb-img"
+                      />
+                    </div>
+                  ) : (
+                    <div className="dashboard-thumb-empty">
+                      <ImageIcon size={12} className="text-[#C9BFB5]" />
+                    </div>
+                  )}
                 </td>
                 <td className="px-6 py-4">
                   <span className="text-[0.875rem] font-medium text-[#3E3B37] line-clamp-1">
@@ -163,7 +182,7 @@ export default function AdminDashboard() {
             ))}
             {posts.length === 0 && (
               <tr>
-                <td colSpan={3}>
+                <td colSpan={4}>
                   <div className="flex flex-col items-center justify-center py-16 gap-3 text-[#8B8680]">
                     <div
                       className="w-12 h-12 rounded-xl flex items-center justify-center"
