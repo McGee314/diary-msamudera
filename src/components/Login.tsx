@@ -41,15 +41,15 @@ export default function Login() {
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center transition-transform hover:scale-105"
               style={{
-                background: 'linear-gradient(135deg, #94A86B 0%, #AEB784 100%)',
-                boxShadow: '0 6px 24px rgba(148,168,107,0.35), 0 1px 0 rgba(255,255,255,0.2) inset',
+                background: 'linear-gradient(135deg, #0F766E 0%, #14B8A6 100%)',
+                boxShadow: '0 6px 24px rgba(13,148,136,0.35), 0 1px 0 rgba(255,255,255,0.2) inset',
               }}
             >
               <Lock size={22} className="text-white" />
             </div>
             <div className="text-center space-y-1.5">
-              <h1 className="text-2xl font-serif italic text-[#3E3B37]">Admin Access</h1>
-              <p className="text-[#8B8680] text-[0.8125rem] leading-relaxed">
+              <h1 className="text-2xl font-serif italic text-[#1E293B]">Admin Access</h1>
+              <p className="text-[#64748B] text-[0.8125rem] leading-relaxed">
                 Sign in to manage Diary Samudera
               </p>
             </div>
@@ -58,7 +58,7 @@ export default function Login() {
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">
+              <label className="text-[10px] uppercase tracking-widest font-bold text-[#94A3B8] px-1">
                 Username
               </label>
               <input
@@ -74,7 +74,7 @@ export default function Login() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[10px] uppercase tracking-widest font-bold text-[#AEB784] px-1">
+              <label className="text-[10px] uppercase tracking-widest font-bold text-[#94A3B8] px-1">
                 Password
               </label>
               <input
@@ -108,13 +108,13 @@ export default function Login() {
 
           {/* Footer note */}
           <div className="text-center space-y-1.5">
-            <p className="text-[10px] text-[#AEB784] uppercase tracking-widest">
+            <p className="text-[10px] text-[#94A3B8] uppercase tracking-widest">
               Authorized users only
             </p>
             {attemptsRemaining < 3 && attemptsRemaining > 0 && (
               <p
                 className="text-[10px] uppercase tracking-widest font-semibold"
-                style={{ color: '#C9846C' }}
+                style={{ color: '#EF4444' }}
               >
                 {attemptsRemaining} attempt{attemptsRemaining > 1 ? 's' : ''} remaining
               </p>

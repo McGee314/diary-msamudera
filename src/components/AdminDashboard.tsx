@@ -55,7 +55,7 @@ export default function AdminDashboard() {
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="flex items-center gap-4 px-6 py-4 border-b border-[#E8DFD2]/50 last:border-none"
+              className="flex items-center gap-4 px-6 py-4 border-b border-[#E2E8F0]/50 last:border-none"
             >
               <div className="skeleton h-4 w-24" />
               <div className="skeleton h-4 flex-1" />
@@ -75,15 +75,15 @@ export default function AdminDashboard() {
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center"
             style={{
-              background: 'linear-gradient(135deg, #94A86B 0%, #AEB784 100%)',
-              boxShadow: '0 3px 12px rgba(148,168,107,0.3)',
+              background: 'linear-gradient(135deg, #0F766E 0%, #14B8A6 100%)',
+              boxShadow: '0 3px 12px rgba(13,148,136,0.3)',
             }}
           >
             <LayoutDashboard size={18} className="text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-serif text-[#3E3B37]">Admin Dashboard</h1>
-            <p className="text-[#8B8680] text-[0.8125rem] mt-0.5">
+            <h1 className="text-2xl font-serif text-[#1E293B]">Admin Dashboard</h1>
+            <p className="text-[#64748B] text-[0.8125rem] mt-0.5">
               {posts.length} {posts.length === 1 ? 'entry' : 'entries'} total
             </p>
           </div>
@@ -103,29 +103,29 @@ export default function AdminDashboard() {
           <thead>
             <tr
               style={{
-                background: 'rgba(240,235,217,0.5)',
-                borderBottom: '1px solid rgba(232,223,210,0.6)',
+                background: 'rgba(241,245,249,0.7)',
+                borderBottom: '1px solid rgba(226,232,240,0.7)',
               }}
             >
-              <th className="px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784]">
+              <th className="px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#94A3B8]">
                 Date
               </th>
-              <th className="px-4 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784] text-center w-16">
+              <th className="px-4 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#94A3B8] text-center w-16">
                 Photo
               </th>
-              <th className="px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784]">
+              <th className="px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#94A3B8]">
                 Title
               </th>
-              <th className="px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784] text-right">
+              <th className="px-6 py-3.5 text-[9px] uppercase tracking-[0.2em] font-bold text-[#94A3B8] text-right">
                 Actions
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#E8DFD2]/50">
+          <tbody className="divide-y divide-[#E2E8F0]/50">
             {posts.map((post, i) => (
               <tr
                 key={post.id}
-                className="group transition-colors duration-150 hover:bg-[#F8F3E1]/60"
+                className="group transition-colors duration-150 hover:bg-[#F7F9FC]/80"
                 style={{ animationDelay: `${i * 40}ms` }}
               >
                 <td className="px-6 py-4">
@@ -144,12 +144,12 @@ export default function AdminDashboard() {
                     </div>
                   ) : (
                     <div className="dashboard-thumb-empty">
-                      <ImageIcon size={12} className="text-[#C9BFB5]" />
+                      <ImageIcon size={12} className="text-[#CBD5E1]" />
                     </div>
                   )}
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-[0.875rem] font-medium text-[#3E3B37] line-clamp-1">
+                  <span className="text-[0.875rem] font-medium text-[#1E293B] line-clamp-1">
                     {post.title}
                   </span>
                 </td>
@@ -157,21 +157,21 @@ export default function AdminDashboard() {
                   <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-200 translate-x-2 group-hover:translate-x-0">
                     <Link
                       to={`/admin/edit/${post.id}`}
-                      className="p-2 rounded-lg text-[#AEB784] hover:text-white hover:bg-[#94A86B] transition-all duration-150"
+                      className="p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#0D9488] transition-all duration-150"
                       title="Edit"
                     >
                       <Edit2 size={14} />
                     </Link>
                     <button
                       onClick={() => handleDelete(post.id)}
-                      className="p-2 rounded-lg text-[#C9846C] hover:text-white hover:bg-[#C9846C] transition-all duration-150"
+                      className="p-2 rounded-lg text-[#EF4444] hover:text-white hover:bg-[#EF4444] transition-all duration-150"
                       title="Delete"
                     >
                       <Trash2 size={14} />
                     </button>
                     <Link
                       to="/"
-                      className="p-2 rounded-lg text-[#AEB784] hover:text-white hover:bg-[#94A86B] transition-all duration-150"
+                      className="p-2 rounded-lg text-[#94A3B8] hover:text-white hover:bg-[#0D9488] transition-all duration-150"
                       title="View on site"
                     >
                       <ExternalLink size={14} />
@@ -183,15 +183,15 @@ export default function AdminDashboard() {
             {posts.length === 0 && (
               <tr>
                 <td colSpan={4}>
-                  <div className="flex flex-col items-center justify-center py-16 gap-3 text-[#8B8680]">
+                  <div className="flex flex-col items-center justify-center py-16 gap-3 text-[#94A3B8]">
                     <div
                       className="w-12 h-12 rounded-xl flex items-center justify-center"
                       style={{
-                        background: 'rgba(174,183,132,0.1)',
-                        border: '1px solid rgba(174,183,132,0.2)',
+                        background: 'rgba(13, 148, 136, 0.06)',
+                        border: '1px solid rgba(13, 148, 136, 0.15)',
                       }}
                     >
-                      <Plus size={20} className="text-[#AEB784]" />
+                      <Plus size={20} className="text-[#0D9488]" />
                     </div>
                     <p className="text-sm italic">No entries yet. Start writing!</p>
                   </div>

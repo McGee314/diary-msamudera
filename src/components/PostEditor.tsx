@@ -100,10 +100,8 @@ export default function PostEditor() {
     setPhotoLoading(true);
     try {
       const compressed = await compressImage(file);
-      // Check size — Firestore docs max ~1MB, base64 adds ~33% overhead
       const sizeKB = Math.round((compressed.length * 3) / 4 / 1024);
       if (sizeKB > 700) {
-        // Retry with lower quality
         const recompressed = await compressImage(file, 600, 0.5);
         const reSizeKB = Math.round((recompressed.length * 3) / 4 / 1024);
         if (reSizeKB > 700) {
@@ -119,7 +117,6 @@ export default function PostEditor() {
       toast.error('Failed to process image');
     } finally {
       setPhotoLoading(false);
-      // Reset input so same file can be re-selected
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
@@ -143,14 +140,8 @@ export default function PostEditor() {
         content: formData.content,
         publishedAt: Timestamp.fromDate(new Date(formData.publishedAt)),
         updatedAt: Timestamp.now(),
+        photoUrl: photoPreview || '',
       };
-
-      // Include photoUrl (or empty string to clear it)
-      if (photoPreview) {
-        postData.photoUrl = photoPreview;
-      } else {
-        postData.photoUrl = '';
-      }
 
       if (id) {
         await updateDoc(doc(db, 'posts', id), postData);
@@ -185,7 +176,7 @@ export default function PostEditor() {
         <div className="glass-card p-10 space-y-6">
           <div className="skeleton h-6 w-20" />
           <div className="skeleton h-10 w-2/3" />
-          <div className="border-t border-[#E8DFD2]/50 pt-6 space-y-3">
+          <div className="border-t border-[#E2E8F0]/50 pt-6 space-y-3">
             <div className="skeleton h-4 w-full" />
             <div className="skeleton h-4 w-full" />
             <div className="skeleton h-4 w-5/6" />
@@ -204,7 +195,7 @@ export default function PostEditor() {
       <div className="flex items-center justify-between">
         <button
           onClick={() => navigate('/admin')}
-          className="group flex items-center gap-1.5 text-[0.8125rem] text-[#8B8680] hover:text-[#3E3B37] transition-colors duration-200"
+          className="group flex items-center gap-1.5 text-[0.8125rem] text-[#64748B] hover:text-[#1E293B] transition-colors duration-200"
         >
           <ArrowLeft size={15} className="transition-transform duration-200 group-hover:-translate-x-0.5" />
           Back to Dashboard
@@ -245,7 +236,7 @@ export default function PostEditor() {
               <div className="badge mb-3">
                 {format(new Date(formData.publishedAt), 'MMMM d, yyyy')}
               </div>
-              <h1 className="text-4xl font-serif text-[#3E3B37] leading-tight">
+              <h1 className="text-4xl font-serif text-[#1E293B] leading-tight">
                 {formData.title || 'Untitled Entry'}
               </h1>
             </header>
@@ -261,16 +252,16 @@ export default function PostEditor() {
               </div>
             )}
 
-            <div className="prose max-w-none prose-headings:font-serif prose-p:leading-[1.85] prose-p:text-[#3E3B37] prose-a:text-[#AEB784] hover:prose-a:text-[#94A86B]">
+            <div className="prose max-w-none prose-headings:font-serif prose-p:leading-[1.85] prose-p:text-[#1E293B] prose-a:text-[#0D9488] hover:prose-a:text-[#0F766E]">
               <ReactMarkdown>{formData.content || '*No content yet*'}</ReactMarkdown>
             </div>
           </div>
         ) : (
           /* Edit form */
-          <form className="divide-y divide-[#E8DFD2]/50">
+          <form className="divide-y divide-[#E2E8F0]/50">
             {/* Title section */}
             <div className="px-8 pt-8 pb-6 space-y-2">
-              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784] flex items-center gap-1.5">
+              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#94A3B8] flex items-center gap-1.5">
                 <FileText size={10} />
                 Title
               </label>
@@ -279,13 +270,13 @@ export default function PostEditor() {
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Entry Title"
-                className="w-full text-[1.625rem] font-serif bg-transparent border-none outline-none placeholder:text-[#E8DFD2] text-[#3E3B37] focus:ring-0 leading-snug"
+                className="w-full text-[1.625rem] font-serif bg-transparent border-none outline-none placeholder:text-[#E2E8F0] text-[#1E293B] focus:ring-0 leading-snug"
               />
             </div>
 
             {/* Date section */}
             <div className="px-8 py-4">
-              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784] block mb-2">
+              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#94A3B8] block mb-2">
                 Publish Date
               </label>
               <input
@@ -298,12 +289,11 @@ export default function PostEditor() {
 
             {/* Photo section */}
             <div className="px-8 py-6">
-              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784] flex items-center gap-1.5 mb-3">
+              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#94A3B8] flex items-center gap-1.5 mb-3">
                 <Camera size={10} />
                 Photo
               </label>
 
-              {/* Hidden file input — accepts images from gallery or camera */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -314,7 +304,6 @@ export default function PostEditor() {
               />
 
               {photoPreview ? (
-                /* Photo preview with remove button */
                 <div className="photo-upload-preview">
                   <img
                     src={photoPreview}
@@ -341,7 +330,6 @@ export default function PostEditor() {
                   </div>
                 </div>
               ) : (
-                /* Upload zone */
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -351,20 +339,20 @@ export default function PostEditor() {
                   {photoLoading ? (
                     <>
                       <span
-                        className="w-5 h-5 rounded-full border-2 border-[#AEB784]/30 border-t-[#AEB784] inline-block"
+                        className="w-5 h-5 rounded-full border-2 border-[#0D9488]/30 border-t-[#0D9488] inline-block"
                         style={{ animation: 'spin 0.7s linear infinite' }}
                       />
-                      <span className="text-sm text-[#8B8680]">Processing…</span>
+                      <span className="text-sm text-[#64748B]">Processing…</span>
                     </>
                   ) : (
                     <>
                       <div className="photo-upload-icon">
                         <ImagePlus size={24} />
                       </div>
-                      <span className="text-sm font-medium text-[#3E3B37]">
+                      <span className="text-sm font-medium text-[#1E293B]">
                         Add Photo
                       </span>
-                      <span className="text-xs text-[#8B8680]">
+                      <span className="text-xs text-[#94A3B8]">
                         Tap to open gallery or camera
                       </span>
                     </>
@@ -375,7 +363,7 @@ export default function PostEditor() {
 
             {/* Content section */}
             <div className="px-8 pt-6 pb-4 space-y-2">
-              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#AEB784]">
+              <label className="text-[9px] uppercase tracking-[0.2em] font-bold text-[#94A3B8]">
                 Content (Markdown)
               </label>
               <textarea
@@ -383,14 +371,14 @@ export default function PostEditor() {
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 placeholder="Write your thoughts here…"
                 rows={18}
-                className="w-full text-[#3E3B37] bg-transparent border-none outline-none focus:ring-0 resize-none placeholder:text-[#E8DFD2]/80 leading-[1.85] text-[0.9375rem]"
+                className="w-full text-[#1E293B] bg-transparent border-none outline-none focus:ring-0 resize-none placeholder:text-[#CBD5E1] leading-[1.85] text-[0.9375rem]"
               />
             </div>
 
             {/* Status bar */}
             <div
-              className="px-8 py-3 flex items-center gap-4 text-[10px] text-[#8B8680]"
-              style={{ background: 'rgba(240,235,217,0.3)' }}
+              className="px-8 py-3 flex items-center gap-4 text-[10px] text-[#94A3B8]"
+              style={{ background: 'rgba(241,245,249,0.5)' }}
             >
               <span>{wordCount} words</span>
               <span className="opacity-40">·</span>
@@ -398,7 +386,7 @@ export default function PostEditor() {
               {photoPreview && (
                 <>
                   <span className="opacity-40">·</span>
-                  <span className="text-[#AEB784]">📷 1 photo</span>
+                  <span className="text-[#0D9488]">📷 1 photo</span>
                 </>
               )}
             </div>

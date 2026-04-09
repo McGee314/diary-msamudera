@@ -39,7 +39,6 @@ interface MiniCalendarProps {
 function MiniCalendar({ selected, onSelect, postDates }: MiniCalendarProps) {
   const [viewMonth, setViewMonth] = useState(new Date());
 
-  // Build the grid: full weeks for the current month view
   const monthStart = startOfMonth(viewMonth);
   const monthEnd = endOfMonth(viewMonth);
   const gridStart = startOfWeek(monthStart, { weekStartsOn: 0 });
@@ -68,17 +67,17 @@ function MiniCalendar({ selected, onSelect, postDates }: MiniCalendarProps) {
           onClick={() => setViewMonth(m => subMonths(m, 1))}
           style={{
             width: 28, height: 28, borderRadius: 8, border: 'none',
-            background: 'rgba(240,235,217,0)', cursor: 'pointer',
+            background: 'rgba(241,245,249,0)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#3E3B37', opacity: 0.5, transition: 'all 0.15s ease',
+            color: '#475569', opacity: 0.6, transition: 'all 0.15s ease',
           }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(240,235,217,0.8)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.5'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(240,235,217,0)'; }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(241,245,249,0.9)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.6'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(241,245,249,0)'; }}
         >
           <ChevronLeft size={14} />
         </button>
 
-        <span style={{ fontFamily: "'Libre Baskerville', serif", fontStyle: 'italic', fontSize: '0.875rem', color: '#3E3B37' }}>
+        <span style={{ fontFamily: "'Libre Baskerville', serif", fontStyle: 'italic', fontSize: '0.875rem', color: '#1E293B' }}>
           {format(viewMonth, 'MMMM yyyy')}
         </span>
 
@@ -86,12 +85,12 @@ function MiniCalendar({ selected, onSelect, postDates }: MiniCalendarProps) {
           onClick={() => setViewMonth(m => addMonths(m, 1))}
           style={{
             width: 28, height: 28, borderRadius: 8, border: 'none',
-            background: 'rgba(240,235,217,0)', cursor: 'pointer',
+            background: 'rgba(241,245,249,0)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#3E3B37', opacity: 0.5, transition: 'all 0.15s ease',
+            color: '#475569', opacity: 0.6, transition: 'all 0.15s ease',
           }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(240,235,217,0.8)'; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.5'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(240,235,217,0)'; }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(241,245,249,0.9)'; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0.6'; (e.currentTarget as HTMLButtonElement).style.background = 'rgba(241,245,249,0)'; }}
         >
           <ChevronRight size={14} />
         </button>
@@ -105,7 +104,7 @@ function MiniCalendar({ selected, onSelect, postDates }: MiniCalendarProps) {
             style={{
               textAlign: 'center', fontSize: '0.5625rem', fontWeight: 700,
               letterSpacing: '0.08em', textTransform: 'uppercase',
-              color: '#AEB784', paddingBottom: 6,
+              color: '#0D9488', paddingBottom: 6,
             }}
           >
             {d}
@@ -122,18 +121,18 @@ function MiniCalendar({ selected, onSelect, postDates }: MiniCalendarProps) {
           const hasDot = hasPost(day);
 
           let bg = 'transparent';
-          let color = inMonth ? '#3E3B37' : '#C9BFB5';
+          let color = inMonth ? '#1E293B' : '#CBD5E1';
           let fontWeight: number | string = 400;
           let boxShadow = 'none';
 
           if (isSelected) {
-            bg = 'linear-gradient(135deg, #94A86B 0%, #AEB784 100%)';
+            bg = 'linear-gradient(135deg, #0F766E 0%, #14B8A6 100%)';
             color = '#fff';
             fontWeight = 600;
-            boxShadow = '0 2px 8px rgba(148,168,107,0.35)';
+            boxShadow = '0 2px 8px rgba(13,148,136,0.35)';
           } else if (isCurrentDay) {
-            bg = 'rgba(240,235,217,0.9)';
-            boxShadow = 'inset 0 0 0 1.5px rgba(174,183,132,0.5)';
+            bg = 'rgba(241,245,249,0.9)';
+            boxShadow = 'inset 0 0 0 1.5px rgba(13,148,136,0.45)';
             fontWeight = 600;
           }
 
@@ -156,12 +155,12 @@ function MiniCalendar({ selected, onSelect, postDates }: MiniCalendarProps) {
                 }}
                 onMouseEnter={e => {
                   if (!isSelected && inMonth) {
-                    (e.currentTarget as HTMLButtonElement).style.background = 'rgba(240,235,217,0.8)';
+                    (e.currentTarget as HTMLButtonElement).style.background = 'rgba(13,148,136,0.1)';
                   }
                 }}
                 onMouseLeave={e => {
                   if (!isSelected && inMonth) {
-                    (e.currentTarget as HTMLButtonElement).style.background = isCurrentDay ? 'rgba(240,235,217,0.9)' : 'transparent';
+                    (e.currentTarget as HTMLButtonElement).style.background = isCurrentDay ? 'rgba(241,245,249,0.9)' : 'transparent';
                   }
                 }}
               >
@@ -171,7 +170,7 @@ function MiniCalendar({ selected, onSelect, postDates }: MiniCalendarProps) {
               {hasDot && inMonth && !isSelected && (
                 <span style={{
                   position: 'absolute', bottom: 2, left: '50%', transform: 'translateX(-50%)',
-                  width: 4, height: 4, borderRadius: '50%', background: '#C9846C',
+                  width: 4, height: 4, borderRadius: '50%', background: '#14B8A6',
                   pointerEvents: 'none',
                 }} />
               )}
@@ -230,20 +229,20 @@ export default function DiaryFeed() {
           <div
             className="flex items-center justify-between px-5 py-3.5 rounded-xl animate-fade-in"
             style={{
-              background: 'rgba(174,183,132,0.1)',
-              border: '1px solid rgba(174,183,132,0.25)',
+              background: 'rgba(13, 148, 136, 0.07)',
+              border: '1px solid rgba(13, 148, 136, 0.2)',
             }}
           >
             <div className="flex items-center gap-2">
-              <CalendarIcon size={13} className="text-[#AEB784]" />
-              <h2 className="text-sm font-medium text-[#3E3B37]">
+              <CalendarIcon size={13} className="text-[#0D9488]" />
+              <h2 className="text-sm font-medium text-[#1E293B]">
                 Entries for{' '}
                 <span className="font-serif italic">{format(selectedDate, 'MMMM d, yyyy')}</span>
               </h2>
             </div>
             <button
               onClick={() => setSelectedDate(undefined)}
-              className="text-[10px] uppercase tracking-widest text-[#AEB784] hover:text-[#94A86B] transition-colors font-semibold"
+              className="text-[10px] uppercase tracking-widest text-[#0D9488] hover:text-[#0F766E] transition-colors font-semibold"
             >
               Show All
             </button>
@@ -261,13 +260,13 @@ export default function DiaryFeed() {
                 <div className="flex items-center gap-2 mb-3">
                   <span className="badge">
                     <span
-                      className="w-1.5 h-1.5 rounded-full bg-[#AEB784] inline-block"
+                      className="w-1.5 h-1.5 rounded-full bg-[#14B8A6] inline-block"
                       style={{ animation: 'floatDot 2.5s ease-in-out infinite' }}
                     />
                     {format(post.publishedAt.toDate(), 'MMMM d, yyyy')}
                   </span>
                 </div>
-                <h2 className="text-[1.75rem] font-serif leading-snug text-[#3E3B37] group-hover:text-[#94A86B] transition-colors duration-300">
+                <h2 className="text-[1.75rem] font-serif leading-snug text-[#1E293B] group-hover:text-[#0D9488] transition-colors duration-300">
                   {post.title}
                 </h2>
               </header>
@@ -283,13 +282,13 @@ export default function DiaryFeed() {
                 </div>
               )}
 
-              <div className="prose max-w-none prose-headings:font-serif prose-p:leading-[1.85] prose-p:text-[#3E3B37] prose-a:text-[#AEB784] hover:prose-a:text-[#94A86B]">
+              <div className="prose max-w-none prose-headings:font-serif prose-p:leading-[1.85] prose-p:text-[#1E293B] prose-a:text-[#0D9488] hover:prose-a:text-[#0F766E]">
                 <ReactMarkdown>{post.content}</ReactMarkdown>
               </div>
 
               <div className="entry-divider">
                 <div className="entry-divider-dot" />
-                <span className="text-[10px] uppercase tracking-[0.18em] text-[#C9846C] font-semibold">
+                <span className="text-[10px] uppercase tracking-[0.18em] text-[#0D9488] font-semibold">
                   End of Entry
                 </span>
               </div>
@@ -299,11 +298,11 @@ export default function DiaryFeed() {
           <div className="flex flex-col items-center justify-center py-24 gap-4 animate-fade-in">
             <div
               className="w-14 h-14 rounded-2xl flex items-center justify-center"
-              style={{ background: 'rgba(174,183,132,0.12)', border: '1px solid rgba(174,183,132,0.2)' }}
+              style={{ background: 'rgba(13, 148, 136, 0.08)', border: '1px solid rgba(13, 148, 136, 0.2)' }}
             >
-              <BookOpen size={22} className="text-[#AEB784]" />
+              <BookOpen size={22} className="text-[#0D9488]" />
             </div>
-            <p className="text-[#8B8680] italic text-sm">No entries found for this date.</p>
+            <p className="text-[#94A3B8] italic text-sm">No entries found for this date.</p>
           </div>
         )}
       </div>
@@ -312,7 +311,7 @@ export default function DiaryFeed() {
       <aside className="space-y-5 lg:sticky lg:top-24 self-start animate-slide-right">
         {/* Calendar card */}
         <div className="glass-card p-5">
-          <div className="flex items-center gap-2 text-[#AEB784] mb-4">
+          <div className="flex items-center gap-2 text-[#0D9488] mb-4">
             <CalendarIcon size={13} />
             <span className="text-[10px] uppercase tracking-widest font-bold">Browse by Date</span>
           </div>
@@ -327,8 +326,8 @@ export default function DiaryFeed() {
         <div
           className="rounded-[1.25rem] p-6 overflow-hidden relative"
           style={{
-            background: 'linear-gradient(135deg, #94A86B 0%, #AEB784 60%, #C4D4A8 100%)',
-            boxShadow: '0 4px 24px rgba(148,168,107,0.3), 0 1px 0 rgba(255,255,255,0.25) inset',
+            background: 'linear-gradient(135deg, #0F766E 0%, #0D9488 55%, #14B8A6 100%)',
+            boxShadow: '0 4px 24px rgba(13,148,136,0.3), 0 1px 0 rgba(255,255,255,0.2) inset',
           }}
         >
           {/* Decorative circles */}
@@ -360,13 +359,13 @@ export default function DiaryFeed() {
           <div
             className="px-5 py-3.5 rounded-xl flex items-center justify-between animate-fade-in"
             style={{
-              background: 'rgba(255,251,245,0.7)',
-              border: '1px solid rgba(232,223,210,0.5)',
+              background: 'rgba(255,255,255,0.75)',
+              border: '1px solid rgba(226,232,240,0.6)',
               backdropFilter: 'blur(8px)',
             }}
           >
-            <span className="text-[0.75rem] text-[#8B8680]">Total entries</span>
-            <span className="text-lg font-serif font-bold text-[#94A86B]">{posts.length}</span>
+            <span className="text-[0.75rem] text-[#64748B]">Total entries</span>
+            <span className="text-lg font-serif font-bold text-[#0D9488]">{posts.length}</span>
           </div>
         )}
       </aside>
